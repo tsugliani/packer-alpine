@@ -1,0 +1,83 @@
+{
+  "builders": [{
+    "boot_command": [
+      "<wait5>",
+      "root<enter><wait>",
+      "ifconfig eth0 up && udhcpc -i eth0<enter><wait5>",
+      "wget http://{{ .HTTPIP }}:{{ .HTTPPort }}/answers<enter><wait>",
+      "setup-apkrepos -1<enter><wait5>",
+      "ERASE_DISKS='/dev/sda' setup-alpine -f $PWD/answers<enter><wait5>",
+      "{{user `guest_password`}}<enter><wait>",
+      "{{user `guest_password`}}<enter><wait10>",
+      "mount /dev/sda3 /mnt<enter>",
+      "echo 'PermitRootLogin yes' >> /mnt/etc/ssh/sshd_config<enter>",
+      "umount /mnt ; reboot<enter>"
+    ],
+    "boot_wait": "10s",
+    "disk_size": 8192,
+    "disk_type_id": "zeroedthick",
+    "format": "ovf",
+    "headless": false,
+    "http_directory": "http",
+    "iso_checksum": "{{ user `iso_checksum_type` }}:{{ user `iso_checksum` }}",
+    "iso_url": "{{ user `iso_url` }}",
+    "name": "{{ user `vm_name` }}",
+    "ovftool_options": "--noImageFiles",
+    "remote_datastore": "{{ user `builder_host_datastore` }}",
+    "remote_host": "{{ user `builder_host` }}",
+    "remote_password": "{{ user `builder_host_password` }}",
+    "remote_type": "esx5",
+    "remote_username": "{{ user `builder_host_username` }}",
+    "shutdown_command": "/sbin/poweroff",
+    "shutdown_timeout": "10s",
+    "skip_compaction": true,
+    "ssh_password": "{{ user `guest_password` }}",
+    "ssh_port": 22,
+    "ssh_timeout": "60m",
+    "ssh_username": "{{ user `guest_username` }}",
+    "type": "vmware-iso",
+    "version": 14,
+    "vm_name": "{{ user `vm_name` }}",
+    "vmdk_name": "{{ user `vm_name` }}-disk0",
+    "vmx_data": {
+      "ethernet0.addressType": "generated",
+      "ethernet0.networkName": "{{ user `builder_host_portgroup` }}",
+      "ethernet0.present": "TRUE",
+      "ethernet0.startConnected": "TRUE",
+      "ethernet0.virtualDev": "vmxnet3",
+      "ethernet0.wakeOnPcktRcv": "FALSE",
+      "memsize": "{{ user `ramsize` }}",
+      "numvcpus": "{{ user `numvcpus` }}"
+    },
+    "vnc_disable_password": true
+  }],
+  "post-processors": [{
+    "environment_vars": [
+      "APPLIANCE_NAME={{ user `vm_name` }}",
+      "APPLIANCE_VERSION={{ user `version` }}",
+      "APPLIANCE_OVA={{ user `vm_name` }}_{{user `version`}}"
+    ],
+    "inline": [
+      "cd postprocess-ova-properties",
+      "./add_ovf_properties.sh"
+    ],
+    "type": "shell-local"
+  }],
+  "provisioners": [
+    {
+      "destination": "/etc/local.d/customization.start",
+      "source": "files/customization.sh",
+      "type": "file"
+    },
+    {
+      "type": "shell",
+      "scripts": [
+        "scripts/alpine-update.sh",
+        "scripts/alpine-system.sh",
+        "scripts/alpine-vmware.sh",
+        "scripts/alpine-cleanup.sh"
+      ]
+    }
+  ]
+}
+
