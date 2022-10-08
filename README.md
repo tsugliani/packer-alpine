@@ -16,6 +16,8 @@ VM Hardware Configuration:
 
 Built artifact from Packer (Only 48MB !!!)
 - https://cloud.tsugliani.fr/ova/alpine-3.15.4.ova
+- https://cloud.tsugliani.fr/ova/alpine-3.15.6.ova
+
 
 ## OVF Properties
 

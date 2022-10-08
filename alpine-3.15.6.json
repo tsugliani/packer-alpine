@@ -1,0 +1,16 @@
+{
+    "version": "3.15.6",
+    "author": "Timo Sugliani",
+    "website": "https://cloud.tsugliani.fr",
+    "description": "Alpine Linux Appliance",
+    "vm_name": "alpine-3.15.6",
+    "guest_os_type": "debian10-64",
+    "hostname": "alpine",
+    "numvcpus": "1",
+    "ramsize": "512",
+    "iso_checksum": "ff0d9cf3acf52fa08aa90984e96f9504a60ed6b763d910152443b29eb689fd47",
+    "iso_checksum_type": "sha256",
+    "iso_url": "https://dl-cdn.alpinelinux.org/alpine/v3.15/releases/x86_64/alpine-virt-3.15.6-x86_64.iso",
+    "guest_username": "root",
+    "guest_password": "VMware1!"
+}
